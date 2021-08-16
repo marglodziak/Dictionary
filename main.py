@@ -4,19 +4,9 @@ import tkinter as tk
 import tkinter.font as font
 
 
-def change(number):
-    if number == '-' or number == '+' or number == ',':
-        button3_1["state"] = tk.DISABLED
-        button6_1["state"] = tk.DISABLED
-        button_comma["state"] = tk.DISABLED
-        button1["state"] = tk.NORMAL
-        button2["state"] = tk.NORMAL
-        button3["state"] = tk.NORMAL
-        button4["state"] = tk.NORMAL
-
-
 # inicjalizacja, fullscreen
 root = tk.Tk()
+root.configure(bg="#a7ab38")
 root.title("Słownik")
 width = root.winfo_screenwidth()
 height = root.winfo_screenheight()
@@ -25,15 +15,16 @@ root.grid_columnconfigure(0, weight=1)
 root.geometry("%dx%d" % (width, height))
 
 # czcionki
-entryFont = font.Font(size=30)
-welcomeFont = font.Font(size=25)
-mainFont = font.Font(size=16)
+entryFont = font.Font(size=30, family="Rasa")
+welcomeFont = font.Font(size=25, family="Rasa")
+welcomeFontBold = font.Font(size=25, family="Open Sans", weight="bold")
+mainFont = font.Font(size=20, family="Rasa")
 
 # ramki
-frameMain = tk.Frame(root)
-frameAddWord = tk.Frame(root)
-frameRandomWord = tk.Frame(root)
-frameTestYourself = tk.Frame(root)
+frameMain = tk.Frame(root, bg="#a7ab38")
+frameAddWord = tk.Frame(root, bg="#a7ab38")
+frameRandomWord = tk.Frame(root, bg="#a7ab38")
+frameTestYourself = tk.Frame(root, bg="#a7ab38")
 
 
 # ------------- FUNKCJE -------------
@@ -78,8 +69,8 @@ def addWord():
     # wprowadzenie słowa i tłumaczenia
     enterWordInPolish = tk.Entry(frameAddWord, width=14, borderwidth=1, font=entryFont, justify="center")
     enterWordInSpanish = tk.Entry(frameAddWord, width=14, borderwidth=1, font=entryFont, justify="center")
-    addWordButton = tk.Button(frameAddWord, text="Dodaj słowo", command=save)
-    goBack = tk.Button(frameAddWord, text="Powrót", command=lambda: showAndHideFrames(frameMain, frameAddWord))
+    addWordButton = tk.Button(frameAddWord, text="Dodaj słowo", font=mainFont, command=save)
+    goBack = tk.Button(frameAddWord, text="Powrót", font=mainFont, command=lambda: showAndHideFrames(frameMain, frameAddWord))
 
     # układ elementów
     enterWordInPolish.grid(row=1, column=0, padx=(60, 0), pady=(0, 30), ipady=20)
@@ -97,7 +88,7 @@ def getRandomWord():
     wholeFile = f.readlines()
     f.close()
 
-    chosenWord = tk.Label(frameRandomWord, text="", font=mainFont)
+    chosenWord = tk.Label(frameRandomWord, text="", font=mainFont, bg="#a7ab38")
 
     def chooseWord():
         # wybranie losowej linii, podział po ':'
@@ -125,13 +116,15 @@ def sprawdz():
         checkWord['command'] = chooseWord
         if slow == tlu:
             getLabel2['text'] += "poprawnie"
+            getLabel2['fg'] = "green"
 
         else:
             getLabel2['text'] += "błąd"
+            getLabel2['fg'] = "red"
 
     showAndHideFrames(frameTestYourself)
-    getLabel = tk.Label(frameTestYourself, text="", font=mainFont)
-    getLabel2 = tk.Label(frameTestYourself, text="Ocena: ", font=mainFont)
+    getLabel = tk.Label(frameTestYourself, text="", font=mainFont, bg="#a7ab38")
+    getLabel2 = tk.Label(frameTestYourself, text="Ocena: ", font=mainFont, bg="#a7ab38")
     entryCheck = tk.Entry(frameTestYourself, width=14, borderwidth=1, font=entryFont, justify="center")
     checkWord = tk.Button(frameTestYourself, text="", font=mainFont, command="")
 
@@ -142,6 +135,7 @@ def sprawdz():
         entryCheck.delete(0, tk.END)
         getLabel2['text'] = "Ocena: "
         checkWord['text'] = "Sprawdź!"
+        getLabel2['fg'] = "black"
         y = int(time.time()) % len(wholeFile)
         chosenLine = wholeFile[y].split(':')
         slowo = chosenLine[0]
@@ -163,13 +157,13 @@ def sprawdz():
 
 def show():
     # utwórz nową ramkę, na wypadek zmiany liczby słów (przykrywanie starego tekstu), pokaż ją; przycisk 'Powrót'
-    frameShowDictionary = tk.Frame(root)
+    frameShowDictionary = tk.Frame(root, bg="#a7ab38")
     showAndHideFrames(frameShowDictionary)
 
     # otwarcie pliku 'slownik', wypisanie po linii
     if not os.path.isfile("slownik"):
-        tk.Label(frameShowDictionary, text="Brak wpisów w słowniku.").grid(row=0)
-        goBackDict = tk.Button(frameShowDictionary, text="Powrót",
+        tk.Label(frameShowDictionary, text="Brak wpisów w słowniku.", font=mainFont, bg="#a7ab38").grid(row=0)
+        goBackDict = tk.Button(frameShowDictionary, text="Powrót", font=mainFont,
                                command=lambda: [showAndHideFrames(frameMain), frameShowDictionary.destroy()])
         goBackDict.grid(row=1)
         return
@@ -179,13 +173,13 @@ def show():
     frames = []
     flag = 1
     while flag:
-        frames.append(tk.Frame(frameShowDictionary))
+        frames.append(tk.Frame(frameShowDictionary, bg="#a7ab38"))
         frames[-1].grid_remove()
         while _row < 10:
             line = f.readline()
             wyrazy = line.split(":")
             if line:
-                tk.Label(frames[-1], text=wyrazy[0] + " - " + wyrazy[1], font=mainFont).grid(row=_row, column=0, padx=20)
+                tk.Label(frames[-1], text=wyrazy[0] + " - " + wyrazy[1], font=mainFont, bg="#a7ab38").grid(row=_row, column=0, padx=20, pady=0)
                 _row += 1
             else:
                 flag = 0
@@ -196,8 +190,8 @@ def show():
 
     frames[0].grid()
 
-    buttonFrame = tk.Frame(frameShowDictionary)
-    goBackDict = tk.Button(buttonFrame, text="Powrót",
+    buttonFrame = tk.Frame(frameShowDictionary, bg="#a7ab38")
+    goBackDict = tk.Button(buttonFrame, text="Powrót", font=mainFont,
                            command=lambda: [showAndHideFrames(frameMain), frameShowDictionary.destroy()])
 
     buttonFrame.grid()
@@ -214,13 +208,13 @@ def show():
 
     goBackDict.grid(row=12, column=0, columnspan=5)
     for i in range(len(frames)):
-        buttons.append(tk.Button(buttonFrame, text=i+1))
+        buttons.append(tk.Button(buttonFrame, text=i+1, font=mainFont))
         buttons[-1].grid(row=11, column=i)
     for i in range(len(buttons)):
         buttons[i]['command'] = lambda i=i:changeFrame(i)
 
 
-# TODO przycisk sprawdź się wewnątrz sprawdź się
+# TODO dodawanie znaczeń po przecinku
 # TODO kolory
 
 # ------------- EKRAN GŁÓWNY -------------
@@ -228,13 +222,13 @@ def show():
 
 # ekran główny, elementy
 frameMain.grid(row=0, column=0, columnspan=3, sticky='')
-welcomeText = tk.Label(frameMain, text="Witaj w słowniku.\n\n"
-                                       "Wybierz z poniższych opcji, co chcesz zrobić:", font=welcomeFont)
-addWords = tk.Button(frameMain, text="Dodaj słowo", font=welcomeFont, pady=10, command=addWord)
-getWord = tk.Button(frameMain, text="Wylosuj słowo", font=welcomeFont, pady=10, command=getRandomWord)
-showDict = tk.Button(frameMain, text="Wyświetl słownik", font=welcomeFont, pady=10, command=show)
-check = tk.Button(frameMain, text="Sprawdź się!", font=welcomeFont, pady=10, command=sprawdz)
-close = tk.Button(frameMain, text="Wyjdź", font=welcomeFont, pady=10, command=root.destroy)
+welcomeText = tk.Label(frameMain, bg="#a7ab38", fg="#fdffba", text="Witaj w słowniku.\n\n"
+                                       "Wybierz z poniższych opcji, co chcesz zrobić:", font=welcomeFontBold)
+addWords = tk.Button(frameMain, text="Dodaj słowo", font=welcomeFont, bg="#fffdbd", fg="#475b11", activebackground="#e3e08f", activeforeground="#475b11", pady=10, padx=20, command=addWord)
+getWord = tk.Button(frameMain, text="Wylosuj słowo", font=welcomeFont, bg="#fffdbd", fg="#5c2500", activebackground="#e3e08f", activeforeground="#5c2500", pady=10, padx=20, command=getRandomWord)
+showDict = tk.Button(frameMain, text="Wyświetl słownik", font=welcomeFont, bg="#fffdbd", fg="#030054", activebackground="#e3e08f", activeforeground="#030054", pady=10, padx=20, command=show)
+check = tk.Button(frameMain, text="Sprawdź się!", font=welcomeFont, bg="#fffdbd", fg="#570054", activebackground="#e3e08f", activeforeground="#570054", pady=10, padx=20, command=sprawdz)
+close = tk.Button(frameMain, text="Wyjdź", font=welcomeFont, bg="#fffdbd", pady=10, fg="#a30000", activebackground="#910000", activeforeground="white", padx=20, command=root.destroy)
 
 # ekran główny, ułożenie elementów
 welcomeText.grid(row=0, column=0, columnspan=4, sticky="")
@@ -243,6 +237,7 @@ getWord.grid(row=1, column=1, padx=(0, 40), pady=80)
 showDict.grid(row=1, column=2, padx=(0, 40))
 check.grid(row=2, column=0)
 close.grid(row=2, column=2)
+print(sorted(font.families()))
 
 
 def zamiana():
